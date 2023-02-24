@@ -1,0 +1,64 @@
+version: '3.5'
+services:
+    front_cristian:
+        build:
+            context: .
+            dockerfile: Dockerfile.frontend
+        image: docker.pkg.github.com/daka22/1/front:latest
+        container_name: front_cristian
+        networks:
+            - network_privated
+            - proxy
+    backend_cristian:
+        build:
+            context: .
+            dockerfile: Dockerfile.backend
+        image: docker.pkg.github.com/daka22/1/backend:latest
+        container_name: backend_cristian
+        networks:
+            - network_privated
+            - proxy
+        depends_on:
+            - postgres_cristian
+        user: root
+    nginx_backend_cristian:
+        build:
+            context: .
+            dockerfile: Dockerfile.backend.nginx
+        image: docker.pkg.github.com/daka22/1/nginx_backend:latest
+        container_name: nginx_backend_cristian
+        depends_on:
+            - backend_cristian
+        networks:
+            - network_privated
+            - proxy
+    postgres_cristian:
+        build:
+            context: .
+            dockerfile: Dockerfile.backend.nginx
+        image: docker.pkg.github.com/daka22/1/db:latest
+        container_name: postgres_cristian
+        environment:
+            POSTGRES_DB: 'crud'
+            POSTGRES_USER: 'postgres'
+            POSTGRES_PASSWORD: 'crixus'
+            POSTGRES_HOST_AUTH_METHOD: 'md5'
+        volumes:
+            - 'db:/var/lib/postgresql/data'
+        networks:
+            - network_privated
+
+
+
+
+
+networks:
+    network_privated:
+        driver: bridge
+    proxy:
+        driver: bridge
+        name: proxy
+        external: true
+
+volumes:
+    db:

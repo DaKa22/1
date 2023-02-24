@@ -1,0 +1,7 @@
+FROM postgres:12.9-alpine
+
+LABEL maintainer="DaKa"
+
+ENV TZ=America/Bogota
+
+RUN apk add tzdata
